@@ -5,6 +5,7 @@
 Ce dépôt contient :
 
 - `index.html` : le hub, c'est-à-dire la page d'accueil des outils. Il ne stocke rien.
+- `preparer/` : la page **« Préparer un événement »** (`/preparer/`), qui crée et modifie les fiches et les enregistre sur GitHub.
 - `evenements/` : **les fiches événement**, la seule source des informations propres à chaque événement (voir `evenements/LISEZMOI.md`).
 - `commun/fiche.js` : le lecteur de fiche, partagé par tous les outils.
 
@@ -22,7 +23,9 @@ Quand l'adresse ne contient pas `?evt=`, les outils ouvrent l'événement « cou
 
 ## Mettre à jour
 
-- **Un événement** : modifier sa fiche `evenements/<id>/fiche.json` sur GitHub (icône crayon → Commit). Tous les outils suivent en 1 à 2 minutes.
+- **Un événement** : page **https://kmcfrance.github.io/preparer/** (bouton « Préparer / modifier un événement » du hub). Elle enregistre la fiche, les images et `evenements/index.json` directement sur GitHub. Tous les outils suivent en 1 à 2 minutes.
+  - Il faut une fois, sur chaque ordinateur, un **jeton GitHub** *fine-grained* : propriétaire `kmcfrance`, dépôt `kmcfrance.github.io` seulement, permission **Contents : Read and write** (la page explique la marche à suivre). Le jeton reste dans le navigateur et n'est envoyé qu'à `api.github.com` ; la page publique n'en contient aucun. En cas de perte : le supprimer sur GitHub (Settings → Developer settings → Personal access tokens).
+  - Sans jeton, la page permet de télécharger les fichiers à déposer à la main.
 - **Le hub** : remplacer `index.html`.
 
 ## Plus tard : adresse maison (ex. `outils.kadampafrance.org`)

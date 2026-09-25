@@ -111,6 +111,8 @@
     /* Formulaires navettes et bénévolat : actifs dès que la fiche contient leur projet Firebase */
     var ff = f.formulaires && f.formulaires.firebase;
     f.formulairesActifs = !!(ff && ff.apiKey && ff.projectId && ff.appId);
+    /* « en test » : utilisables par l'équipe, mais pas encore diffusés (pas de lien sur le hub, bandeau sur la page) */
+    f.formulairesTest = !!(f.formulaires && f.formulaires.test);
     return f;
   }
 

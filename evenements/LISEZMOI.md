@@ -65,6 +65,7 @@ Les dates s'écrivent `AAAA-MM-JJ` et les heures `HH:MM`, en heure de Paris.
 | `app.url` / `app.admin` | **À laisser vide pour un nouvel événement** : les outils génériques `/app/?evt=…` sont alors utilisés. Seule la fiche CD2026 les remplit, pour pointer vers ses anciens outils. |
 | `streaming.firebase`, `streaming.emailjs` | Configuration Firebase (web) et EmailJS de l'outil liens |
 | `streaming.finDiffere`, `expediteur`, `contact` | Fin du différé, nom de l'expéditeur, adresse de contact |
+| `formulaires.test` | `true` = formulaires **en test** pour cet événement : liens non affichés sur le hub, bandeau « version de test » sur les formulaires, pastille « En test » dans les admins (case dans Préparer → App & streaming). |
 | `formulaires.firebase` | Configuration Firebase (web) du projet des **formulaires** navettes et bénévolat. Le même pour tous les événements, et différent de celui des liens. Vide = formulaires pas encore disponibles pour l'événement. Les questions ne sont **pas** dans la fiche : elles se gèrent dans les admins. |
 | `programme[]` | `jour`, `debut`, `fin`, `titre`, `type` (`teaching`, `meditation`, `ceremony`, `meal`, `practical`), `desc`, `badge`. Ajouter `seance` (nom) pour que l'élément devienne une séance de streaming. |
 | `infos[]` | Rubriques « Infos pratiques » de l'app (`contenu` en HTML simple) |

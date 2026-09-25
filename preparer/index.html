@@ -1845,6 +1845,13 @@ function rendreOutils(b) {
 
   b.appendChild(el('h3', { class: 'sub', text: 'Formulaires navettes et bénévolat — projet Firebase' }));
   b.appendChild(el('p', { class: 'aide', style: 'margin-bottom:10px', html: 'Un <strong>seul projet</strong> pour tous les événements (les réponses y sont rangées par événement) : il se crée une fois, puis il est repris automatiquement quand on duplique un événement. Il doit être <strong>différent</strong> de celui des liens. Mise en place : <a href="https://github.com/kmcfrance/kmcfrance.github.io/blob/main/commun/FORMULAIRES.md" target="_blank" rel="noopener">FORMULAIRES.md</a>. Ensuite, les questions, l\'ouverture et les réponses se gèrent dans les admins <a href="/navettes/admin.html" target="_blank" rel="noopener">Navettes</a> et <a href="/benevolat/admin.html" target="_blank" rel="noopener">Bénévolat</a>.' }));
+  var cbTest = el('input', { type: 'checkbox', id: 'f-formulaires-test', checked: !!(F.formulaires && F.formulaires.test) });
+  cbTest.addEventListener('change', function () {
+    if (cbTest.checked) { if (!estObjet(F.formulaires)) F.formulaires = {}; F.formulaires.test = true; }
+    else if (F.formulaires) delete F.formulaires.test;
+    changement();
+  });
+  b.appendChild(el('label', { class: 'chk', style: 'margin-bottom:12px' }, [cbTest, el('span', { html: '<strong>Formulaires en test</strong> pour cet événement : liens non affichés sur le hub, bandeau « version de test » sur les formulaires. À décocher pour les diffuser.' })]));
   blocFirebase(b, 'formulaires', 'firebase-coller-form', 'Où la trouver : console Firebase → projet des formulaires → roue dentée <strong>Paramètres du projet</strong> → onglet <strong>Général</strong> → « Vos applications » → l\'application Web → <strong>Configuration</strong>. Copiez tout le bloc.');
 }
 /* Zone « coller la configuration Firebase » + les 6 champs, pour <racine>.firebase */

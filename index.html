@@ -302,13 +302,14 @@ function versHub(f){
       x.open = o[t.url];
       /* formulaires : utilisables seulement si la fiche contient leur projet Firebase */
       x.inactif = t.formulaire && !f.formulairesActifs;
+      x.test = t.formulaire && f.formulairesActifs && f.formulairesTest;
       if (t.extra && !x.inactif) x.extra = { href: o[t.extra.url], label: t.extra.label };
       else delete x.extra;
       return x;
     }),
     keyDates: (f.datesCles || []).map(function(k){ return { d: k.date, t: Fiche.t(k.texte, 'fr') }; }),
     links: [{ label: 'App mobile des participants (lien du QR code)', url: o.appPublic }]
-      .concat(f.formulairesActifs ? [{ label: 'Formulaire navettes', url: o.navettesPublic }, { label: 'Formulaire séjour de bénévolat', url: o.benevolatPublic }] : [])
+      .concat(f.formulairesActifs && !f.formulairesTest ? [{ label: 'Formulaire navettes', url: o.navettesPublic }, { label: 'Formulaire séjour de bénévolat', url: o.benevolatPublic }] : [])
       .concat((f.liens || []).map(function(l){ return { label: Fiche.t(l.label, 'fr'), url: l.url }; })),
     contacts: (f.contacts || []).map(function(c){ return { role: c.role, who: c.qui || '', email: c.email, phone: c.tel }; })
   };
@@ -446,6 +447,7 @@ function render(ev){
       '<h3>' + esc(t.title) + '</h3>' +
       '<span class="status" data-check="' + esc(abs(t.open)) + '"><span class="dot"></span><span class="st-txt">…</span></span></div>' +
       '<p>' + esc(t.text) + '</p>' +
+      (t.test ? '<p class="inactif"><b>En test</b> : réservé à l\'équipe, le lien n\'est pas diffusé. Pour cet événement, les formulaires officiels restent ceux des « Liens utiles à diffuser ».</p>' : '') +
       (t.inactif ? '<p class="inactif">Pas encore configuré pour cet événement : page « Préparer / modifier » → section <b>App &amp; streaming</b> → <b>Formulaires</b>.</p>' : '') +
       (tags ? '<div class="tags">' + tags + '</div>' : '') +
       '<div class="actions"><a class="btn btn-primary" href="' + esc(abs(t.open)) + '" target="_blank" rel="noopener">' + esc(t.openLabel) + ICONS.ext + '</a>' + extra + '</div>' +

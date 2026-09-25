@@ -73,6 +73,17 @@
     "expediteur": "Célébration du Dharma 2026",
     "contact": "inscriptions-festival@kadampafrance.org"
   },
+  "formulaires": {
+    "test": true,
+    "firebase": {
+      "apiKey": "AIzaSyDM-i2Dj22E2lFEFVmqLKWdvLA6soCuxZY",
+      "authDomain": "kmcfrance-formulaires.firebaseapp.com",
+      "projectId": "kmcfrance-formulaires",
+      "storageBucket": "kmcfrance-formulaires.firebasestorage.app",
+      "messagingSenderId": "48773811202",
+      "appId": "1:48773811202:web:2c86c56624fe039adfab1b"
+    }
+  },
   "badges": {
     "url": "/cd2026-creation_badge/"
   },

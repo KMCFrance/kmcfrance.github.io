@@ -220,7 +220,8 @@
       oui: 'Oui', non: 'Non', ecrire: 'Écrire à', jusquau: 'Réponses jusqu\'au {d}',
       ferme: 'Ce formulaire est fermé.', bientot: 'Ce formulaire ouvrira le {d}.', termine: 'Ce formulaire est fermé depuis le {d}.',
       indispo: 'Ce formulaire n\'est pas encore disponible.', introuvable: 'Formulaire introuvable.', chargementEchec: 'Impossible de charger le formulaire. Vérifiez votre connexion puis rechargez la page.',
-      contact: 'Une question ? Écrivez à {c}.', apercu: 'Aperçu : rien n\'a été envoyé.', chargement: 'Chargement…', a: 'à'
+      contact: 'Une question ? Écrivez à {c}.', apercu: 'Aperçu : rien n\'a été envoyé.', chargement: 'Chargement…', a: 'à',
+      test: 'Version de test : ce formulaire n\'est pas encore utilisé pour les inscriptions.'
     },
     en: {
       requis: 'This answer is required.', requisCase: 'Please tick this box.', requisChoix: 'Please choose an answer.',
@@ -242,7 +243,8 @@
       oui: 'Yes', non: 'No', ecrire: 'Write to', jusquau: 'Answers until {d}',
       ferme: 'This form is closed.', bientot: 'This form will open on {d}.', termine: 'This form has been closed since {d}.',
       indispo: 'This form is not available yet.', introuvable: 'Form not found.', chargementEchec: 'The form could not be loaded. Please check your connection and reload the page.',
-      contact: 'Any question? Write to {c}.', apercu: 'Preview: nothing has been sent.', chargement: 'Loading…', a: 'at'
+      contact: 'Any question? Write to {c}.', apercu: 'Preview: nothing has been sent.', chargement: 'Loading…', a: 'at',
+      test: 'Test version: this form is not used for registrations yet.'
     }
   };
   function msg(lang, cle, vars) {
@@ -905,6 +907,7 @@
       if (statut === 'chargement') { p.appendChild(el('p', { class: 'chargement', text: msg(lang, 'chargement') })); racine.appendChild(p); return; }
       var info = '';
       if (statut === 'ouvert' && ouverture && ouverture.fin) info = msg(lang, 'jusquau', { d: dateHeureTexte(ouverture.fin, lang) });
+      if (fiche && fiche.formulairesTest) p.appendChild(el('div', { class: 'note warn', role: 'note', style: 'margin-bottom:14px;font-weight:600', text: msg(lang, 'test') }));
       p.appendChild(entete(fiche, lang, titre, info));
       if (statut === 'ouvert') {
         var premier = !dejaAffiche; dejaAffiche = true;

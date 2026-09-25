@@ -200,6 +200,7 @@
         var txt = { ouvert: 'Ouvert', ferme: 'Fermé', bientot: 'Ouvre bientôt', termine: 'Date limite passée' }[e.etat];
         droite.appendChild(el('span', { class: 'pill ' + (e.etat === 'ouvert' ? 'on' : e.etat === 'bientot' ? 'wait' : ''), title: 'État du formulaire public' }, [el('span', { class: 'dot' }), txt]));
       }
+      if (f && f.formulairesTest) droite.appendChild(el('span', { class: 'pill wait', title: 'Case « en test » cochée dans la fiche (page Préparer) : lien non diffusé sur le hub, bandeau « version de test » sur le formulaire' }, [el('span', { class: 'dot' }), 'En test']));
       if (f) droite.appendChild(el('a', { class: 'btn btn-g btn-sm', href: lienPublic('fr'), target: '_blank', rel: 'noopener', text: 'Voir le formulaire ↗' }));
       if (A.cx && A.cx.auth && A.cx.auth.currentUser) droite.appendChild(el('button', { class: 'btn btn-g btn-sm', type: 'button', text: 'Se déconnecter', onclick: function () {
         /* on enregistre d'abord le brouillon en cours */

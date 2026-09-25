@@ -70,6 +70,9 @@ Les mots de passe se changent toujours depuis l'admin (onglet **Réglages**).
 
 ## 2. Préparer le formulaire d'un événement
 
+**Mode test** : dans Préparer, la case **« Formulaires en test »** (App & streaming → Formulaires) permet de tout essayer sans rien diffuser. Les liens ne sont pas affichés sur le hub, les formulaires portent un bandeau « Version de test » et les admins affichent « En test ». Décocher la case pour les utiliser pour de vrai.
+C'est le cas de la **Célébration du Dharma 2026**, dont les formulaires officiels restent les Google Forms. Pour elle, « Partir du modèle » donne directement la version CD2026 : horaires 12h30–19h15 et 13h–18h30, 5 €, date limite du 24 novembre, arrivée des bénévoles au plus tard le mercredi 25 à 9h.
+
 1. Ouvrir l'admin (depuis la tuile du hub) et se connecter.
 2. La première fois pour cet événement :
    - soit **Partir du modèle** : les questions habituelles, avec les dates reprises de la fiche ;

@@ -106,7 +106,8 @@
       navettesPublic: abs('/navettes/' + q),
       navettesAdmin: abs('/navettes/admin.html' + q),
       benevolatPublic: abs('/benevolat/' + q),
-      benevolatAdmin: abs('/benevolat/admin.html' + q)
+      benevolatAdmin: abs('/benevolat/admin.html' + q),
+      lettres: abs('/lettres/' + q)
     };
     /* Formulaires navettes et bénévolat : actifs dès que la fiche contient leur projet Firebase */
     var ff = f.formulaires && f.formulaires.firebase;

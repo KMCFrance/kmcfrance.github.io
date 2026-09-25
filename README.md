@@ -9,6 +9,7 @@ Ce dépôt contient :
 - `evenements/` : **les fiches événement**, la seule source des informations propres à chaque événement (voir `evenements/LISEZMOI.md`).
 - `commun/fiche.js` : le lecteur de fiche, partagé par tous les outils.
 - `navettes/` et `benevolat/` : les **formulaires** Navettes et Bénévolat (page publique + `admin.html`), avec leur moteur commun `commun/formulaires*.js`. Mode d'emploi et mise en place : `commun/FORMULAIRES.md`.
+- `lettres/` : les **lettres KBS** (`/lettres/?evt=<id>`), qui produisent les .docx à charger dans KBS. Le moteur est dans `commun/lettres.js` et `commun/lettres-base.js`, les textes dans `evenements/<id>/lettres.json`. Mode d'emploi : `lettres/LISEZMOI.md`.
 
 ## Les dépôts
 
@@ -20,6 +21,7 @@ Ce dépôt contient :
 | `badges` | `/badges/?evt=<id>` | Badges PDF (listing lu dans le navigateur) |
 | `kmcfrance.github.io` (ce dépôt) | `/navettes/?evt=<id>` + `admin.html` | Formulaire des navettes (réponses dans Firebase, projet des formulaires) |
 | `kmcfrance.github.io` (ce dépôt) | `/benevolat/?evt=<id>` + `admin.html` | Formulaire du séjour de bénévolat |
+| `kmcfrance.github.io` (ce dépôt) | `/lettres/?evt=<id>` | Lettres KBS (.docx), textes enregistrés sur GitHub avec le jeton de « Préparer » |
 | `cd2026-Appmobile`, `cd2026-liens`, `cd2026-creation_badge` | | **Outils de CD2026, figés** : on n'y touche plus jusqu'à la fin de la Célébration |
 
 Quand l'adresse ne contient pas `?evt=`, les outils ouvrent l'événement « courant » indiqué dans `evenements/index.json`.
@@ -41,4 +43,5 @@ Il suffit d'une seule manipulation, sur ce dépôt. Tous les outils suivent, et 
    - exporter les réglages de l'outil badges ;
    - vérifier dans Google Cloud que les clés API Firebase ne sont pas limitées à `kmcfrance.github.io` ;
    - choisir une période sans événement.
-4. Ne plus jamais retirer ce domaine ensuite.
+4. Lettres KBS : dans `commun/lettres.js`, remplacer `L.ORIGINE_PUBLIQUE` par la nouvelle adresse, puis retélécharger les lettres et les recharger dans KBS. Les anciens liens restent redirigés, mais les lettres auront ainsi la bonne adresse.
+5. Ne plus jamais retirer ce domaine ensuite.

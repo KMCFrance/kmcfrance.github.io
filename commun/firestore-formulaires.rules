@@ -1,0 +1,74 @@
+rules_version = '2';
+
+// =====================================================================
+// Règles de sécurité du projet Firebase des FORMULAIRES (navettes, bénévolat)
+// À coller dans : console Firebase → Firestore Database → onglet Règles → Publier.
+// Ce projet ne sert qu'aux formulaires (jamais à l'outil des liens ni à l'app).
+// Mode d'emploi : /commun/FORMULAIRES.md
+// =====================================================================
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Les outils qui existent
+    function outilConnu(outil) {
+      return outil in ['navettes', 'benevolat'];
+    }
+
+    // Admin d'un outil = connecté avec le compte technique de CET outil
+    // (créé par « Première utilisation » dans /navettes/admin.html ou /benevolat/admin.html)
+    // IMPORTANT : une fois les deux mots de passe créés, désactiver la création de comptes
+    // (Authentication → Paramètres → Actions des utilisateurs), voir FORMULAIRES.md.
+    function estAdmin(outil) {
+      return request.auth != null
+        && request.auth.token.firebase.sign_in_provider == 'password'
+        && request.auth.token.email == 'admin-' + outil + '@kmcfrance.github.io';
+    }
+
+    // Le formulaire accepte-t-il des réponses maintenant ? (case « ouvert » + dates d'ouverture et de fermeture)
+    // (un champ absent compte comme vide : la règle ne tombe jamais en erreur)
+    function formulaireOuvert(evt, outil) {
+      let o = get(/databases/$(database)/documents/evenements/$(evt)/formulaires/$(outil)).data.get('ouverture', {});
+      let debut = o.get('debutTs', null);
+      let fin = o.get('finTs', null);
+      return o.get('ouvert', false) == true
+        && (debut == null || request.time >= debut)
+        && (fin == null || request.time < fin);
+    }
+
+    // Une réponse bien formée : seulement ces champs, date posée par le serveur
+    function reponseValide() {
+      let d = request.resource.data;
+      return d.keys().hasOnly(['r', 'lang', 'cree', 'v'])
+        && d.keys().hasAll(['r', 'lang', 'cree'])
+        && d.r is map
+        && d.r.size() > 0
+        && d.r.size() <= 60
+        && d.lang in ['fr', 'en']
+        && d.cree == request.time
+        && (!('v' in d) || d.v is int);
+    }
+
+    // Configuration d'un formulaire : questions publiées, brouillon, ouverture.
+    // Lisible par tous (c'est ce qu'affiche la page publique : aucune donnée personnelle),
+    // modifiable seulement par l'admin de l'outil.
+    match /evenements/{evt}/formulaires/{outil} {
+      allow get: if outilConnu(outil);
+      allow list: if false;
+      allow create, update: if outilConnu(outil) && estAdmin(outil);
+      allow delete: if false;
+
+      // Réponses des participants : tout le monde peut en ENVOYER une (si le formulaire est ouvert),
+      // seul l'admin de l'outil peut les LIRE ou les SUPPRIMER. Personne ne peut les modifier.
+      match /reponses/{rid} {
+        allow create: if outilConnu(outil) && formulaireOuvert(evt, outil) && reponseValide();
+        allow read, delete: if outilConnu(outil) && estAdmin(outil);
+        allow update: if false;
+      }
+    }
+
+    // Tout le reste est interdit
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

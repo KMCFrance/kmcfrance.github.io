@@ -69,6 +69,16 @@
     "expediteur": "NOM DE L'ÉVÉNEMENT",
     "contact": "inscriptions-festival@kadampafrance.org"
   },
+  "formulaires": {
+    "firebase": {
+      "apiKey": "",
+      "authDomain": "",
+      "projectId": "",
+      "storageBucket": "",
+      "messagingSenderId": "",
+      "appId": ""
+    }
+  },
   "programme": [
     {
       "jour": "2026-11-27",

@@ -1,7 +1,8 @@
 # Fiches événement
 
 Chaque événement a **une fiche** : `/evenements/<id>/fiche.json`, avec ses images dans le même dossier.
-Tous les outils la lisent : le hub, l'app mobile (`/app/`), l'outil liens (`/liens/`) et les badges (`/badges/`).
+Tous les outils la lisent : le hub, l'app mobile (`/app/`), l'outil liens (`/liens/`), les badges (`/badges/`)
+et les formulaires navettes et bénévolat (`/navettes/`, `/benevolat/`).
 
 - `index.json` contient la liste des événements et l'événement **courant**, celui qui s'ouvre sans `?evt=` dans l'adresse.
 - `_modele/` est une fiche vierge de référence. Les dossiers qui commencent par `_` ne sont jamais publiés ni utilisés.
@@ -32,8 +33,12 @@ Plus besoin d'ouvrir GitHub : la page remplit la fiche, réduit les images et en
 7. **App.** Dans l'admin de l'app, « Initialiser depuis la fiche » reprend le programme, les infos et le café.
    Ensuite, tout se modifie dans l'admin, comme d'habitude.
 8. **Liens.** Dans l'admin des liens, créer le mot de passe à la première connexion, puis « Pré-remplir les séances ».
+8 bis. **Formulaires.** Dans les admins Navettes et Bénévolat : « Partir du modèle » (ou reprendre les questions d'un autre
+   événement), relire, « Publier », puis ouvrir le formulaire (onglet « Ouverture & lien »). Le projet Firebase des formulaires
+   est commun à tous les événements : il se crée une seule fois (voir `/commun/FORMULAIRES.md`) et il est gardé en duplication.
 9. **Après l'événement (RGPD).** Supprimer les participants du streaming, ou le projet Firebase, après la date
-   `streaming.finDiffere` plus un délai raisonnable.
+   `streaming.finDiffere` plus un délai raisonnable. Supprimer aussi les réponses des formulaires navettes et bénévolat
+   (admin → Réglages → « Supprimer toutes les réponses »).
 
 **CD2026** : ses outils sont figés (`cd2026-*`). La page peut modifier sa fiche, mais cela ne change que
 ce qu'affiche le hub (dates clés, liens, contacts). Ses adresses `app.url`, `streaming.url`… sont conservées.
@@ -60,6 +65,7 @@ Les dates s'écrivent `AAAA-MM-JJ` et les heures `HH:MM`, en heure de Paris.
 | `app.url` / `app.admin` | **À laisser vide pour un nouvel événement** : les outils génériques `/app/?evt=…` sont alors utilisés. Seule la fiche CD2026 les remplit, pour pointer vers ses anciens outils. |
 | `streaming.firebase`, `streaming.emailjs` | Configuration Firebase (web) et EmailJS de l'outil liens |
 | `streaming.finDiffere`, `expediteur`, `contact` | Fin du différé, nom de l'expéditeur, adresse de contact |
+| `formulaires.firebase` | Configuration Firebase (web) du projet des **formulaires** navettes et bénévolat. Le même pour tous les événements, et différent de celui des liens. Vide = formulaires pas encore disponibles pour l'événement. Les questions ne sont **pas** dans la fiche : elles se gèrent dans les admins. |
 | `programme[]` | `jour`, `debut`, `fin`, `titre`, `type` (`teaching`, `meditation`, `ceremony`, `meal`, `practical`), `desc`, `badge`. Ajouter `seance` (nom) pour que l'élément devienne une séance de streaming. |
 | `infos[]` | Rubriques « Infos pratiques » de l'app (`contenu` en HTML simple) |
 | `cafe.carte[]`, `cafe.horaires[]`, `cafe.note` | Carte et horaires du café. Si le bloc est absent, l'onglet est masqué. |

@@ -590,6 +590,9 @@ var MODELE = {
     emailjs: { publicKey: 'AVNL_-PrO4NqU5RU6', serviceId: 'service_8cjeogb', templateId: 'template_6u839yv' },
     expediteur: '', contact: 'inscriptions-festival@kadampafrance.org'
   },
+  formulaires: {
+    firebase: { apiKey: '', authDomain: '', projectId: '', storageBucket: '', messagingSenderId: '', appId: '' }
+  },
   programme: [],
   infos: [
     { id: 'lieu', titre: { fr: 'Lieu & accès', en: 'Venue & access' }, contenu: { fr: "<strong>Centre de Méditation Kadampa France</strong><br>Château de Segrais, 72220 Saint-Mars-d'Outillé<br><br><a href=\"https://maps.google.com/?q=Chateau+de+Segrais+Saint-Mars-d%27Outille\" target=\"_blank\" rel=\"noopener\">Ouvrir dans Google Maps ↗</a>", en: "<strong>Kadampa Meditation Centre France</strong><br>Château de Segrais, 72220 Saint-Mars-d'Outillé<br><br><a href=\"https://maps.google.com/?q=Chateau+de+Segrais+Saint-Mars-d%27Outille\" target=\"_blank\" rel=\"noopener\">Open in Google Maps ↗</a>" } },
@@ -795,8 +798,8 @@ var S = {
 };
 
 /* Accès par chemin : 'lieu.centre.fr' */
-var GARDER_VIDE = /^streaming\.(firebase|emailjs)\./;
-var CONTENEURS = { nom: 1, lieu: 1, charte: 1, images: 1, app: 1, streaming: 1, 'streaming.firebase': 1, 'streaming.emailjs': 1 };
+var GARDER_VIDE = /^(streaming\.(firebase|emailjs)|formulaires\.firebase)\./;
+var CONTENEURS = { nom: 1, lieu: 1, charte: 1, images: 1, app: 1, streaming: 1, 'streaming.firebase': 1, 'streaming.emailjs': 1, formulaires: 1, 'formulaires.firebase': 1 };
 function lire(chemin, o) { return chemin.split('.').reduce(function (a, k) { return a == null ? undefined : a[k]; }, o || S.F); }
 function ecrire(chemin, v, o) {
   var racine = o || S.F, cles = chemin.split('.'), cur = racine;
@@ -962,6 +965,8 @@ async function ouvrirDuplication(id) {
   F.app.firebaseUrl = '';
   if (!F.streaming) F.streaming = {};
   F.streaming.firebase = { apiKey: '', authDomain: '', projectId: '', storageBucket: '', messagingSenderId: '', appId: '' };
+  /* Exception : le projet Firebase des formulaires (navettes, bénévolat) est commun à tous
+     les événements (les réponses y sont rangées par événement) : on le garde. */
   F.id = '';
   S.F = F;
   S.sourceCode = F.code || null;
@@ -978,7 +983,7 @@ async function ouvrirDuplication(id) {
     } catch (e) { manquantes.push(v); delete F.images[im.cle]; }
   }));
   var nomSrc = txt(F.nom, 'fr') || id;
-  S.notes = [{ cls: '', html: '<strong>Copie de « ' + esc(nomSrc) + ' ».</strong> À faire maintenant :<ol><li>le <strong>nom</strong> (l\'identifiant se remplit tout seul) ;</li><li>les <strong>dates</strong> : le programme, les dates clés et les horaires du café pourront être décalés automatiquement ;</li><li>les <strong>bases Firebase</strong> du nouvel événement (section « App & streaming ») : celles de l\'événement copié ont été retirées exprès ;</li><li>relire les textes qui citent des dates (infos pratiques, dates clés).</li></ol>' }];
+  S.notes = [{ cls: '', html: '<strong>Copie de « ' + esc(nomSrc) + ' ».</strong> À faire maintenant :<ol><li>le <strong>nom</strong> (l\'identifiant se remplit tout seul) ;</li><li>les <strong>dates</strong> : le programme, les dates clés et les horaires du café pourront être décalés automatiquement ;</li><li>les <strong>bases Firebase</strong> de l\'app et des liens du nouvel événement (section « App & streaming ») : celles de l\'événement copié ont été retirées exprès (le projet des <strong>formulaires</strong>, commun à tous les événements, est gardé) ;</li><li>relire les textes qui citent des dates (infos pratiques, dates clés).</li></ol>' }];
   if (manquantes.length) S.notes.push({ cls: 'warn', html: 'Images non copiées (introuvables) : ' + manquantes.map(esc).join(', ') + '. Ajoutez-les dans la section Images.' });
   afficherEditeur();
 }
@@ -1065,7 +1070,7 @@ var SECTIONS = [
   ['cafe', 'Café & boutique', ''],
   ['dates', 'Dates clés', 'frise du hub'],
   ['liens', 'Liens & contacts', 'hub'],
-  ['outils', 'App & streaming', 'Firebase, e-mails'],
+  ['outils', 'App & streaming', 'Firebase, e-mails, formulaires'],
   ['avance', 'Avancé', 'JSON, adresses']
 ];
 
@@ -1159,7 +1164,7 @@ function afficherEditeur() {
   form.appendChild(section('cafe', 6, 'Café & boutique', '', rendreCafe));
   form.appendChild(section('dates', 7, 'Dates clés', 'frise et compte à rebours du hub', rendreDates));
   form.appendChild(section('liens', 8, 'Liens & contacts', 'affichés sur le hub', rendreLiens));
-  form.appendChild(section('outils', 9, 'App & streaming', 'Firebase, e-mails', rendreOutils));
+  form.appendChild(section('outils', 9, 'App & streaming', 'Firebase, e-mails, formulaires', rendreOutils));
   form.appendChild(section('avance', 10, 'Avancé', 'JSON, adresses des anciens outils', rendreAvance));
   var av = $('#sec-avance'); av.open = false;
   av.addEventListener('toggle', function () { var bd = $('#body-avance'); if (av.open && bd._recharger) bd._recharger(); });
@@ -1830,30 +1835,40 @@ function rendreOutils(b) {
   b.appendChild(g);
 
   b.appendChild(el('h3', { class: 'sub', text: 'Streaming — base Firebase (Firestore)' }));
-  var coller = el('textarea', { id: 'firebase-coller', rows: 5, class: 'mono', spellcheck: 'false', placeholder: 'const firebaseConfig = {\n  apiKey: "AIza…",\n  authDomain: "mon-evenement.firebaseapp.com",\n  …\n};' });
-  var res = el('p', { class: 'aide', 'aria-live': 'polite' });
-  coller.addEventListener('input', function () {
-    var o = analyserFirebase(coller.value), n = Object.keys(o).length;
-    if (!n) { res.textContent = coller.value.trim() ? 'Aucune valeur reconnue : copiez tout le bloc « firebaseConfig ».' : ''; return; }
-    if (!estObjet(F.streaming.firebase)) F.streaming.firebase = {};
-    Object.keys(o).forEach(function (k) { F.streaming.firebase[k] = o[k]; var i = document.getElementById('f-streaming-firebase-' + k); if (i) i.value = o[k]; });
-    res.innerHTML = '<strong>' + n + ' valeur(s) sur 6 reprise(s)</strong>' + (n < 6 ? ' — manquantes : ' + FIREBASE_CLES.filter(function (k) { return !o[k]; }).join(', ') : ' ✓');
-    changement();
-  });
-  b.appendChild(el('div', { class: 'field' }, [
-    el('label', { for: 'firebase-coller', text: 'Coller ici la configuration copiée depuis la console Firebase' }),
-    coller, res,
-    el('p', { class: 'aide', html: 'Où la trouver : console Firebase → projet de l\'outil liens → roue dentée <strong>Paramètres du projet</strong> → onglet <strong>Général</strong> → « Vos applications » → l\'application Web → <strong>Configuration</strong> (ou « Config »). Copiez tout le bloc. Mise en place : <code>/liens/LISEZMOI.md</code>.' })
-  ]));
-  var gf = el('div', { class: 'grid', style: 'margin-top:12px' });
-  FIREBASE_CLES.forEach(function (k) { gf.appendChild(champP(k, 'streaming.firebase.' + k, { spell: false, autocomplete: 'off' })); });
-  b.appendChild(gf);
+  blocFirebase(b, 'streaming', 'firebase-coller', 'Où la trouver : console Firebase → projet de l\'outil liens → roue dentée <strong>Paramètres du projet</strong> → onglet <strong>Général</strong> → « Vos applications » → l\'application Web → <strong>Configuration</strong> (ou « Config »). Copiez tout le bloc. Mise en place : <code>/liens/LISEZMOI.md</code>.');
 
   b.appendChild(el('h3', { class: 'sub', text: 'Envoi des e-mails (EmailJS)' }));
   var ge = el('div', { class: 'grid3' });
   [['publicKey', 'Clé publique'], ['serviceId', 'Service'], ['templateId', 'Modèle']].forEach(function (k) { ge.appendChild(champP(k[1], 'streaming.emailjs.' + k[0], { spell: false, autocomplete: 'off' })); });
   b.appendChild(ge);
   b.appendChild(el('p', { class: 'aide', style: 'margin-top:8px', text: 'Ces valeurs sont en général les mêmes d\'un événement à l\'autre (compte EmailJS du centre).' }));
+
+  b.appendChild(el('h3', { class: 'sub', text: 'Formulaires navettes et bénévolat — projet Firebase' }));
+  b.appendChild(el('p', { class: 'aide', style: 'margin-bottom:10px', html: 'Un <strong>seul projet</strong> pour tous les événements (les réponses y sont rangées par événement) : il se crée une fois, puis il est repris automatiquement quand on duplique un événement. Il doit être <strong>différent</strong> de celui des liens. Mise en place : <a href="https://github.com/kmcfrance/kmcfrance.github.io/blob/main/commun/FORMULAIRES.md" target="_blank" rel="noopener">FORMULAIRES.md</a>. Ensuite, les questions, l\'ouverture et les réponses se gèrent dans les admins <a href="/navettes/admin.html" target="_blank" rel="noopener">Navettes</a> et <a href="/benevolat/admin.html" target="_blank" rel="noopener">Bénévolat</a>.' }));
+  blocFirebase(b, 'formulaires', 'firebase-coller-form', 'Où la trouver : console Firebase → projet des formulaires → roue dentée <strong>Paramètres du projet</strong> → onglet <strong>Général</strong> → « Vos applications » → l\'application Web → <strong>Configuration</strong>. Copiez tout le bloc.');
+}
+/* Zone « coller la configuration Firebase » + les 6 champs, pour <racine>.firebase */
+function blocFirebase(b, racine, idColler, aide) {
+  var F = S.F;
+  var coller = el('textarea', { id: idColler, rows: 5, class: 'mono', spellcheck: 'false', placeholder: 'const firebaseConfig = {\n  apiKey: "AIza…",\n  authDomain: "mon-projet.firebaseapp.com",\n  …\n};' });
+  var res = el('p', { class: 'aide', 'aria-live': 'polite' });
+  coller.addEventListener('input', function () {
+    var o = analyserFirebase(coller.value), n = Object.keys(o).length;
+    if (!n) { res.textContent = coller.value.trim() ? 'Aucune valeur reconnue : copiez tout le bloc « firebaseConfig ».' : ''; return; }
+    if (!estObjet(F[racine])) F[racine] = {};
+    if (!estObjet(F[racine].firebase)) F[racine].firebase = {};
+    Object.keys(o).forEach(function (k) { F[racine].firebase[k] = o[k]; var i = document.getElementById('f-' + racine + '-firebase-' + k); if (i) i.value = o[k]; });
+    res.innerHTML = '<strong>' + n + ' valeur(s) sur 6 reprise(s)</strong>' + (n < 6 ? ' — manquantes : ' + FIREBASE_CLES.filter(function (k) { return !o[k]; }).join(', ') : ' ✓');
+    changement();
+  });
+  b.appendChild(el('div', { class: 'field' }, [
+    el('label', { for: idColler, text: 'Coller ici la configuration copiée depuis la console Firebase' }),
+    coller, res,
+    el('p', { class: 'aide', html: aide })
+  ]));
+  var gf = el('div', { class: 'grid', style: 'margin-top:12px' });
+  FIREBASE_CLES.forEach(function (k) { gf.appendChild(champP(k, racine + '.firebase.' + k, { spell: false, autocomplete: 'off' })); });
+  b.appendChild(gf);
 }
 
 /* ---------- 7.10 Avancé ---------- */
@@ -1987,6 +2002,11 @@ function valider() {
   var st = F.streaming || {}, cfg = st.firebase || {};
   var manque = FIREBASE_CLES.filter(function (k) { return !cfg[k]; });
   if (manque.length) w('outils', 'Configuration Firebase du streaming incomplète : l\'outil des liens ne fonctionnera pas encore.', 'firebase-coller');
+  var fo = (F.formulaires && F.formulaires.firebase) || {};
+  var manqueF = FIREBASE_CLES.filter(function (k) { return !fo[k]; });
+  if (manqueF.length === FIREBASE_CLES.length) w('outils', 'Projet Firebase des formulaires non renseigné : les formulaires navettes et bénévolat ne fonctionneront pas encore pour cet événement.', 'firebase-coller-form');
+  else if (manqueF.length) w('outils', 'Configuration Firebase des formulaires incomplète (manque : ' + manqueF.join(', ') + ').', 'firebase-coller-form');
+  if (fo.projectId && cfg.projectId && fo.projectId === cfg.projectId) e('outils', 'Les formulaires et l\'outil des liens utilisent le même projet Firebase : leurs règles de sécurité se remplaceraient. Créez un projet séparé pour les formulaires (voir FORMULAIRES.md).', 'firebase-coller-form');
   if (!st.contact) w('outils', 'Adresse de contact du streaming vide.', 'f-streaming-contact');
   else if (!emailValide(st.contact)) e('outils', 'Adresse de contact du streaming invalide.', 'f-streaming-contact');
   if (st.finDiffere && !dateHeureValide(st.finDiffere)) e('outils', 'Fin du différé : date invalide.', 'f-streaming-finDiffere');
@@ -2227,9 +2247,10 @@ async function lancerCommit(F, courant, forcer) {
   body.appendChild(el('p', { class: 'lbl', text: 'Ouvrir et vérifier' }));
   body.appendChild(el('ul', { class: 'linklist' }, [
     ['Hub', O.hub, 'dates clés, liens, contacts'], ['App mobile des participants', O.app, 'lien du QR code'], ['Admin de l\'app', O.appAdmin, '« Initialiser depuis la fiche » pour un nouvel événement'],
-    ['Admin des liens de streaming', O.liensAdmin, '« Pré-remplir les séances »'], ['Badges', O.badges, '']
+    ['Admin des liens de streaming', O.liensAdmin, '« Pré-remplir les séances »'], ['Badges', O.badges, ''],
+    ['Admin Navettes', O.navettesAdmin, '« Partir du modèle », puis ouvrir le formulaire'], ['Admin Bénévolat', O.benevolatAdmin, '« Partir du modèle », puis ouvrir le formulaire']
   ].map(function (l) { return el('li', null, [el('a', { href: l[1], target: '_blank', rel: 'noopener' }, [el('span', null, [l[0], l[2] ? el('br') : null, l[2] ? el('small', { text: l[2] }) : null]), el('small', { text: '↗' })])]); })));
-  if (etaitCreation) body.appendChild(el('div', { class: 'note', style: 'margin-top:12px', html: 'Prochaines étapes pour un nouvel événement : créer les bases Firebase si ce n\'est pas fait, puis dans l\'admin de l\'app « Initialiser depuis la fiche », et dans l\'admin des liens créer le mot de passe puis « Pré-remplir les séances ». Voir <code>/evenements/LISEZMOI.md</code>.' }));
+  if (etaitCreation) body.appendChild(el('div', { class: 'note', style: 'margin-top:12px', html: 'Prochaines étapes pour un nouvel événement : créer les bases Firebase si ce n\'est pas fait, puis dans l\'admin de l\'app « Initialiser depuis la fiche », dans l\'admin des liens créer le mot de passe puis « Pré-remplir les séances », et dans les admins Navettes et Bénévolat « Partir du modèle ». Voir <code>/evenements/LISEZMOI.md</code>.' }));
   foot.appendChild(el('button', { class: 'btn btn-teal', type: 'button', text: 'Continuer à modifier', onclick: function () { dlg.close(); } }));
   afficherEditeurApresSave();
 }
@@ -2259,7 +2280,8 @@ function outilsDe(F) {
   return {
     hub: ORIGINE + '/' + q,
     app: abs((F.app && F.app.url) || '/app/' + q), appAdmin: abs((F.app && F.app.admin) || '/app/admin.html' + q),
-    liensAdmin: abs((F.streaming && F.streaming.admin) || '/liens/admin.html' + q), badges: abs((F.badges && F.badges.url) || '/badges/' + q)
+    liensAdmin: abs((F.streaming && F.streaming.admin) || '/liens/admin.html' + q), badges: abs((F.badges && F.badges.url) || '/badges/' + q),
+    navettesAdmin: ORIGINE + '/navettes/admin.html' + q, benevolatAdmin: ORIGINE + '/benevolat/admin.html' + q
   };
 }
 

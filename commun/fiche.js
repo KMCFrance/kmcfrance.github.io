@@ -1,6 +1,7 @@
 /* =========================================================
    fiche.js — lecture de la fiche événement (CMK France)
-   Partagé par le hub, l'app mobile, l'outil liens et les badges.
+   Partagé par le hub, l'app mobile, l'outil liens, les badges
+   et les formulaires (navettes, bénévolat).
 
    Où sont les fiches :  /evenements/<id>/fiche.json
    Liste + événement courant :  /evenements/index.json
@@ -101,8 +102,15 @@
       appAdmin: abs((f.app && f.app.admin) || '/app/admin.html' + q),
       liensPublic: abs((f.streaming && f.streaming.url) || '/liens/' + q),
       liensAdmin: abs((f.streaming && f.streaming.admin) || '/liens/admin.html' + q),
-      badges: abs((f.badges && f.badges.url) || '/badges/' + q)
+      badges: abs((f.badges && f.badges.url) || '/badges/' + q),
+      navettesPublic: abs('/navettes/' + q),
+      navettesAdmin: abs('/navettes/admin.html' + q),
+      benevolatPublic: abs('/benevolat/' + q),
+      benevolatAdmin: abs('/benevolat/admin.html' + q)
     };
+    /* Formulaires navettes et bénévolat : actifs dès que la fiche contient leur projet Firebase */
+    var ff = f.formulaires && f.formulaires.firebase;
+    f.formulairesActifs = !!(ff && ff.apiKey && ff.projectId && ff.appId);
     return f;
   }
 

@@ -8,6 +8,7 @@ Ce dépôt contient :
 - `preparer/` : la page **« Préparer un événement »** (`/preparer/`), qui crée et modifie les fiches et les enregistre sur GitHub.
 - `evenements/` : **les fiches événement**, la seule source des informations propres à chaque événement (voir `evenements/LISEZMOI.md`).
 - `commun/fiche.js` : le lecteur de fiche, partagé par tous les outils.
+- `navettes/` et `benevolat/` : les **formulaires** Navettes et Bénévolat (page publique + `admin.html`), avec leur moteur commun `commun/formulaires*.js`. Mode d'emploi et mise en place : `commun/FORMULAIRES.md`.
 
 ## Les dépôts
 
@@ -17,6 +18,8 @@ Ce dépôt contient :
 | `app` | `/app/?evt=<id>` | App mobile des participants + `admin.html` |
 | `liens` | `/liens/admin.html?evt=<id>` | Liens de streaming personnels |
 | `badges` | `/badges/?evt=<id>` | Badges PDF (listing lu dans le navigateur) |
+| `kmcfrance.github.io` (ce dépôt) | `/navettes/?evt=<id>` + `admin.html` | Formulaire des navettes (réponses dans Firebase, projet des formulaires) |
+| `kmcfrance.github.io` (ce dépôt) | `/benevolat/?evt=<id>` + `admin.html` | Formulaire du séjour de bénévolat |
 | `cd2026-Appmobile`, `cd2026-liens`, `cd2026-creation_badge` | | **Outils de CD2026, figés** : on n'y touche plus jusqu'à la fin de la Célébration |
 
 Quand l'adresse ne contient pas `?evt=`, les outils ouvrent l'événement « courant » indiqué dans `evenements/index.json`.
